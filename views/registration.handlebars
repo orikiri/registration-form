@@ -1,0 +1,30 @@
+<form onsubmit="sendForm(this); return false;" action="/registration" method="post">
+    <div class="mb-3">
+        <input name="name" type="text" class="form-control" placeholder="Name">
+    </div>
+    <div class="mb-3">
+        <input name="surname" type="text" class="form-control" placeholder="surname">
+    </div>
+    <div class="mb-3">
+        <input name="email" type="text" class="form-control" placeholder="email">
+    </div>
+    <div class="mb-3">
+        <input name="password" type="password" class="form-control" placeholder="password">
+    </div>
+    <div class="mb-3">
+        <input type="submit" class="btn btn-primary form-control" placeholder="password">
+    </div>
+</form>
+
+<script>
+    function sendForm(form) {
+        let formData = new FormData(form);
+        fetch('/registration', {
+            method: 'post',
+            body: formData
+        }).then(response=>response.text())
+        .then(result => {
+            console.log(result);
+        })
+    }
+</script>
