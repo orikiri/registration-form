@@ -1,4 +1,4 @@
-<form action="/auth" method="post">
+<form onsubmit="sendForm(this); return false;" action="/auth" method="post">
     <div class="mb-3">
         <input name="login" type="text" placeholder="login" class="form-control">
         </div>
@@ -9,3 +9,14 @@
         <input type="submit" class="btn btn-primary form-control">
         </div>
 </form>
+
+<script>
+    function sendForm(form) {
+        let formData = new FormData(form)
+        fetch('/auth', {
+            method: "post",
+            body: formData       
+        }).then(response => response.text())
+        .then(result => {console.log(result);})
+    }
+</script>

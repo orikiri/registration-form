@@ -12,6 +12,8 @@ const express = require('express');
  // use - метод, который вызывается каждый раз перед тем, как будет открыт маршрут
  app.use(express.static(`${__dirname}`)); // static - метод (функция), используемая для пределения папки, в которой будут храниться файлы
  
+
+ // ====== Регистрация ===== //
 app.get('/registration', (req, res) => {
     res.render('registration', {title: "Регистрация"})
 })
@@ -19,8 +21,14 @@ app.post('/registration', urlencodedParser , (req, res) => {
     console.log(req.body);
     res.send('ok');
 })
+
+// ====== Авторизация ====== //
 app.get('/auth', (req, res) => {
     res.render('auth', {title: 'Авторизация'})
+})
+app.post('/auth', urlencodedParser, (req, res) => {
+    console.log(req.body);
+    res.send('password is correct')
 })
  app.get('/', (req, res) => {
      res.statusCode = 200;
