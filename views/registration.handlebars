@@ -7,6 +7,7 @@
     </div>
     <div class="mb-3">
         <input name="email" type="text" class="form-control" placeholder="email">
+        <p id="emailError" class="text-danger" hidden> Пользователь с таким почтовым адресом уже существует </p>
     </div>
     <div class="mb-3">
         <input name="password" type="password" class="form-control" placeholder="password">
@@ -17,14 +18,20 @@
 </form>
 
 <script>
+    const emailError = document.getElementById('emailError');
     function sendForm(form) {
+        emailError.hidden = true;
         let formData = new FormData(form);
         fetch('/registration', {
             method: 'post',
             body: formData
-        }).then(response=>response.text()) 
+        }).then(response=>response.json()) 
         .then(result => {
-            console.log(result);
+            if(result.result == 'success') {
+                location.href = '/auth';
+            } else {
+                emailError.hidden = false;
+            }
         })
     }
 </script>
