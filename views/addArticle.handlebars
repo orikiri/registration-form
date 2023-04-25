@@ -56,7 +56,7 @@
             body: formData 
         }).then(response => response.json())
         .then(result => {
-            console.log(result);
+            location.href = '/addArticle';
         })
     }
 </script>

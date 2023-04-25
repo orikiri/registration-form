@@ -1,8 +1,35 @@
-<h1>Hello world!</h1>
-
 {{#if auth}}
     <a href="/addArticle" class="btn btn-primary">Добавить статью</a>
 {{/if}}
 
+<script>
+    fetch('/getArticles').then(response => response.json())
+    .then(result => {
+        console.log(result);
+        result.reverse().forEach(article => {
+            const postPreview = document.createElement('div');
+            postPreview.classList.add('post-preview');
 
+            const a = document.createElement('a');
+            a.href = '#';
 
+            const p = document.createElement('p');
+            p.classList.add('post-meta');
+            p.innerText = `Опубликовал: ${article.author}`
+
+            const postTitle = document.createElement('h2');
+            postTitle.classList.add('post-title');
+            postTitle.innerText = article.title;
+            const postSubtitle = document.createElement('h6');
+            postSubtitle.classList.add('post-subtitle');  
+            postSubtitle.innerText = `Опубликовано: ${article.date}`; 
+
+            const divider = document.createElement('hr');
+            divider.classList.add('my-4');
+
+            a.append(postTitle, postSubtitle);
+            postPreview.append(a, p);
+            mainContainer.append(postPreview, divider);
+        })
+    })
+</script>

@@ -7,36 +7,36 @@ const bcrypt = require('bcrypt');
 const HTMLParser = require('node-html-parser');
 const fs = require('fs');
  
- const saltRounds = 10;
- const { engine } = require('express-handlebars');
- const urlencodedParser = express.urlencoded();
- const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'node',
- })
+const saltRounds = 10;
+const { engine } = require('express-handlebars');
+const urlencodedParser = express.urlencoded();
+const connection = mysql.createConnection({
+host: 'localhost',
+user: 'root',
+database: 'node',
+})
 
- function getIntRandom(min, max) {
-    Math.floor( Math.random() * (max-min) + min )
- }
+function getIntRandom(min, max) {
+Math.floor( Math.random() * (max-min) + min )
+}
 
- app.engine( 'handlebars', engine() );
- app.set('views', './views');
- app.set('view engine', 'handlebars');
- app.use(cookieParser('secret'));
+app.engine( 'handlebars', engine() );
+app.set('views', './views');
+app.set('view engine', 'handlebars');
+app.use(cookieParser('secret'));
 
  
- // use - метод, который вызывается каждый раз перед тем, как будет открыт маршрут
- app.use(express.static(`${__dirname}`)); // static - метод (функция), используемая для определения папки, в которой будут храниться файлы
- 
- // ====== ГЛАВНАЯ СТРАНИЦА ====== //
- app.get('/', (req, res) => {
-    res.statusCode = 200;
+// use - метод, который вызывается каждый раз перед тем, как будет открыт маршрут
+app.use(express.static(`${__dirname}`)); // static - метод (функция), используемая для определения папки, в которой будут храниться файлы
 
-    res.render('home', 
-       {title: "Главная страница", 
-       content: 'Hello World!',
-       auth: req.cookies.token })
+// ====== ГЛАВНАЯ СТРАНИЦА ====== //
+app.get('/', (req, res) => {
+res.statusCode = 200;
+
+res.render('home', 
+    {title: "Главная страница", 
+    content: "Hello world!",
+    auth: req.cookies.token })
 })
 
  // ====== СТРАНИЦА РЕГИСТРАЦИИ ===== //
@@ -112,26 +112,42 @@ app.get('/addArticle', (req, res) => {
 app.post('/addArticle', multer().any(), (req, res) => {
     const title = req.body.title;
     const author = req.body.author;
+    const date = new Date().toLocaleString();
     const content = req.body.content; //content form 'formData.append('CONTENT', ...)
     const document = HTMLParser.parse(content); 
-    const img = document.querySelector('img');
-    let src = img.getAttribute('src');
-    let base64 = src.split(',')[1];
-    let extension = src.split(',')[0].split('/')[1].split(';')[0];
-    let fileName = Date.now() + '.' + extension;
-    fs.writeFile('public/userFiles/' + fileName, base64, 'base64', (err) => {
-        console.log(err);
-    })
-    img.setAttribute('src', '/userFiles/' + fileName);
-    connection.execute('INSERT INTO `articles` (title, content, author) VALUES (?, ?, ?)',
-    [title, document.toString(), author])
+    const imgs = document.querySelectorAll('img'); // необходимо для тех случаев, если в статье будет более 1 картинки
+    if (imgs) {
+        imgs.forEach(img => {
+            let src = img.getAttribute('src');
+            let base64 = src.split(',')[1];
+            let extension = src.split(',')[0].split('/')[1].split(';')[0];
+            let fileName = Date.now() + '.' + extension;
+            fs.writeFile('public/userFiles/' + fileName, base64, 'base64', (err) => {
+                console.log(err);
+            })
+            img.setAttribute('src', '/userFiles/' + fileName);
+        }
+        )}
+    connection.execute('INSERT INTO `articles` (title, content, author, date) VALUES (?, ?, ?, ?)',
+    [title, document.toString(), author, date])
     res.json({
         result: 'success'
-    });
+    })
+})
+
+// ====== ОТОБРАЖЕНИЕ СТАТЕЙ ====== //
+
+app.get('/getArticles', (req, res) => {
+    connection.execute(
+        "SELECT * FROM `articles`", 
+        (err, resultSet) => {
+            res.json(resultSet);
+        }
+    )
 })
 
 
- 
+
 
  // app.get('/about', (req, res) => {
  //     res.statusCode = 200;
