@@ -5,7 +5,6 @@
 <script>
     fetch('/getArticles').then(response => response.json())
     .then(result => {
-        console.log(result);
         result.reverse().forEach(article => {
             const postPreview = document.createElement('div');
             postPreview.classList.add('post-preview');

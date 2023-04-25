@@ -122,12 +122,13 @@ app.post('/addArticle', multer().any(), (req, res) => {
             let base64 = src.split(',')[1];
             let extension = src.split(',')[0].split('/')[1].split(';')[0];
             let fileName = Date.now() + '.' + extension;
-            fs.writeFile('public/userFiles/' + fileName, base64, 'base64', (err) => {
+            fs.writeFile('/public/userFiles/' + fileName, base64, 'base64', (err) => {
                 console.log(err);
             })
-            img.setAttribute('src', '/userFiles/' + fileName);
+            img.setAttribute('src', '/public/userFiles/' + fileName);
         }
         )}
+
     connection.execute('INSERT INTO `articles` (title, content, author, date) VALUES (?, ?, ?, ?)',
     [title, document.toString(), author, date])
     res.json({
@@ -154,7 +155,13 @@ app.get('/blog/:articleId', (req, res) => {
         'SELECT * FROM `articles` WHERE id = ?', 
         [articleId],
         (err, resultSet) => {
-            res.json(resultSet[0])
+            const article = resultSet[0];
+            res.render('article', 
+            {
+                title: article.title,
+                content: article.content,
+                author: article.author
+            })
         })
 })
 
