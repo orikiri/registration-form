@@ -146,6 +146,17 @@ app.get('/getArticles', (req, res) => {
     )
 })
 
+// ====== ОТОБРАЖЕНИЕ ВЫБРАННОЙ СТАТЬИ ====== //
+
+app.get('/blog/:articleId', (req, res) => {
+    const articleId = req.params.articleId;
+    connection.execute(
+        'SELECT * FROM `articles` WHERE id = ?', 
+        [articleId],
+        (err, resultSet) => {
+            res.json(resultSet[0])
+        })
+})
 
 
 
@@ -163,10 +174,10 @@ app.get('/getArticles', (req, res) => {
      console.log(req.body); // body - работает с методом POST
      res.send(req.body);
  })
-//  app.get('*', (req, res) => { // * - это любой URL. В данном случае сначала проверится '/', '/about', и если это ни то, ни другое, то будет выполняться callback на остальные url.
-//      res.statusCode = 404;
-//      res.send('Not found');
-//  })
+ app.get('*', (req, res) => { // * - это любой URL. В данном случае сначала проверится '/', '/about', и если это ни то, ни другое, то будет выполняться callback на остальные url.
+     res.statusCode = 404;
+     res.send('Not found');
+ })
  
  app.listen(3000)
  
