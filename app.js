@@ -13,7 +13,7 @@ import { Article } from './controllers/Article.js';
 const __dirname = path.resolve();
 const app = express(); // объект приложения
 const urlencodedParser = express.urlencoded();
-const connection = mysql.createConnection({
+const connection = mysql.createConnection({ 
     host: 'localhost',
     user: 'root',
     database: 'node',
